@@ -1,12 +1,19 @@
 import React from 'react';
 import {
-  CheckCircle,
-  XCircle,
-  MinusCircle,
+  Check,
+  X,
+  Minus,
   ArrowBendDownRight,
+  CaretDown,
   Sparkle,
-  CornersOut,
-  SlidersHorizontal,
+  Info,
+  Crosshair,
+  BoundingBox,
+  Gauge,
+  Clock,
+  Stack,
+  Cpu,
+  Circuitry,
 } from '@phosphor-icons/react';
 import { type InspectionResponse, normalizeGrade } from '../api/types';
 import { useInspectionStore } from '../store/useInspectionStore';
@@ -23,158 +30,199 @@ export const InspectionHUD: React.FC<InspectionHUDProps> = ({ result }) => {
     setHoveredDefectId,
   } = useInspectionStore();
 
-  if (!result) return null;
+  const { defect_ratio_percent = 0, reject_reason = null, defects = [], timing } = result || {};
+  const gradeKey = result ? normalizeGrade(result.grade) : 'NO_OBJECT';
 
-  const { defect_ratio_percent, reject_reason, defects, timing } = result;
-  const gradeKey = normalizeGrade(result.grade);
-
-  // Status configurations - clean Swiss minimalism with clear semantic colors
+  // Status configurations matching industrial sorting visual design
   const statusConfig = {
     GRADE_A: {
-      label: 'GRADE A · EXPORT',
-      pill: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25',
-      textColor: 'text-emerald-600 dark:text-emerald-400',
-      barColor: 'bg-emerald-500',
-      icon: <CheckCircle size={18} weight="fill" className="text-emerald-500" />,
+      gradeText: 'GRADE A',
+      subText: 'EXPORT QUALITY',
+      badgeBg: 'bg-[#F0FDF4] dark:bg-emerald-950/30 border-[#DCFCE7] dark:border-emerald-800/40',
+      iconBg: 'bg-[#10B981]',
+      icon: <Check size={18} weight="bold" className="text-white" />,
+      textColor: 'text-[#15803D] dark:text-emerald-400',
+      subTextColor: 'text-[#16A34A]/80 dark:text-emerald-500/80',
+      defectColor: 'text-[#15803D] dark:text-emerald-400',
+      barGradient: 'from-emerald-400 to-emerald-500',
       subtitle: `Optimal surface quality (≤ ${gradeAThreshold.toFixed(1)}% export threshold).`,
       route: 'Chute #1 (Packaging / Export)',
     },
     GRADE_B: {
-      label: 'GRADE B · COMMERCIAL',
-      pill: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25',
-      textColor: 'text-amber-600 dark:text-amber-400',
-      barColor: 'bg-amber-500',
-      icon: <CheckCircle size={18} weight="fill" className="text-amber-500" />,
+      gradeText: 'GRADE B',
+      subText: 'COMMERCIAL',
+      badgeBg: 'bg-[#FFFBEB] dark:bg-amber-950/30 border-[#FEF3C7] dark:border-amber-800/40',
+      iconBg: 'bg-[#F59E0B]',
+      icon: <Check size={18} weight="bold" className="text-white" />,
+      textColor: 'text-[#D97706] dark:text-amber-400',
+      subTextColor: 'text-[#B45309]/80 dark:text-amber-500/80',
+      defectColor: 'text-[#EA580C] dark:text-orange-400',
+      barGradient: 'from-[#F59E0B] to-[#EA580C]',
       subtitle: `Minor cosmetic blemish (≤ ${gradeBThreshold.toFixed(1)}% commercial threshold).`,
       route: 'Chute #2 (Secondary Sort)',
     },
     REJECT: {
-      label: 'REJECT · SCRAP',
-      pill: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/25',
-      textColor: 'text-rose-600 dark:text-rose-400',
-      barColor: 'bg-rose-500',
-      icon: <XCircle size={18} weight="fill" className="text-rose-500" />,
+      gradeText: 'REJECT',
+      subText: 'DEFECTIVE / ROT',
+      badgeBg: 'bg-[#FFF1F2] dark:bg-rose-950/30 border-[#FFE4E6] dark:border-rose-800/40',
+      iconBg: 'bg-[#F43F5E]',
+      icon: <X size={18} weight="bold" className="text-white" />,
+      textColor: 'text-[#E11D48] dark:text-rose-400',
+      subTextColor: 'text-[#BE123C]/80 dark:text-rose-500/80',
+      defectColor: 'text-[#E11D48] dark:text-rose-400',
+      barGradient: 'from-rose-500 to-rose-600',
       subtitle: reject_reason || `Defect exceeds commercial limit (${defect_ratio_percent.toFixed(1)}% > ${gradeBThreshold.toFixed(1)}%).`,
-      route: 'Chute #3 (Reject Chute)',
+      route: 'Chute #3 (Scrap Reject)',
     },
     NO_OBJECT: {
-      label: 'STANDBY · NO FRUIT',
-      pill: 'bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20',
-      textColor: 'text-slate-500 dark:text-slate-400',
-      barColor: 'bg-slate-400',
-      icon: <MinusCircle size={18} weight="bold" className="text-slate-400" />,
-      subtitle: 'Conveyor belt empty. Awaiting produce feed.',
-      route: 'Conveyor Belt (Standby)',
+      gradeText: 'STANDBY',
+      subText: 'AWAITING FEED',
+      badgeBg: 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700',
+      iconBg: 'bg-slate-400 dark:bg-slate-600',
+      icon: <Minus size={18} weight="bold" className="text-white" />,
+      textColor: 'text-slate-700 dark:text-slate-300',
+      subTextColor: 'text-slate-500 dark:text-slate-400',
+      defectColor: 'text-slate-500 dark:text-slate-400',
+      barGradient: 'from-slate-300 to-slate-400',
+      subtitle: 'Conveyor belt ready. Ingest a frame and press Space to inspect.',
+      route: 'Chute Routing (Standby)',
     },
   }[gradeKey];
 
   // Timing metrics
-  const totalMs = Math.max(0.1, timing?.total_ms || 0);
+  const totalMs = timing?.total_ms || 0;
   const inferenceMs = timing?.inference_ms || 0;
-  const fps = (1000.0 / totalMs).toFixed(0);
+  const fps = totalMs > 0 ? (1000.0 / totalMs).toFixed(0) : '0';
 
-  // Calibrated tolerance progress: 0% to 7% scale (max limit)
-  const maxScale = Math.max(7.0, gradeBThreshold + 2.0);
-  const fillPercent = Math.min(100, Math.max(0, (defect_ratio_percent / maxScale) * 100));
+  // Calibrated tolerance progress bar calculation
+  const maxScale = Math.max(10.0, gradeBThreshold * 1.35, defect_ratio_percent * 1.15);
+  const fillPercent = result ? Math.min(100, Math.max(0, (defect_ratio_percent / maxScale) * 100)) : 0;
   const gradeAPercent = (gradeAThreshold / maxScale) * 100;
   const gradeBPercent = (gradeBThreshold / maxScale) * 100;
 
   return (
-    <div className="w-full rounded-2xl border border-slate-200/80 dark:border-[#262B33] bg-white dark:bg-[#16191E] shadow-sm p-5 space-y-4 transition-colors">
-      {/* 1. Header: Verdict Pill + Defect % + Route Pill */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            {statusConfig.icon}
-            <span className={`px-2.5 py-1 rounded-lg border text-xs font-bold font-mono uppercase tracking-wide ${statusConfig.pill}`}>
-              {statusConfig.label}
-            </span>
+    <div className="w-full rounded-3xl border border-slate-200/80 dark:border-[#262B33] bg-white dark:bg-[#16191E] shadow-sm p-5 sm:p-6 space-y-5 transition-colors">
+      {/* 1. Header: Grade Badge + Defect Area + Route Pill */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        {/* Left: Grade badge & Defect metric */}
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+          {/* Grade Badge Squircle */}
+          <div className={`flex items-center gap-3 px-3.5 py-2 rounded-2xl border shadow-2xs ${statusConfig.badgeBg}`}>
+            <div className={`h-8 w-8 rounded-xl flex items-center justify-center shadow-xs ${statusConfig.iconBg}`}>
+              {statusConfig.icon}
+            </div>
+            <div className="flex flex-col text-left">
+              <span className={`font-black text-xs sm:text-sm font-mono tracking-wider ${statusConfig.textColor}`}>
+                {statusConfig.gradeText}
+              </span>
+              <span className={`text-[9px] sm:text-[10px] font-bold tracking-widest uppercase font-mono ${statusConfig.subTextColor}`}>
+                {statusConfig.subText}
+              </span>
+            </div>
           </div>
 
-          <span className="text-slate-200 dark:text-slate-800">|</span>
+          {/* Vertical Divider */}
+          <div className="h-8 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block" />
 
-          {/* Core Defect Metric */}
-          <div className="flex items-baseline gap-1.5">
-            <span className={`text-xl font-bold font-mono tabular-nums ${statusConfig.textColor}`}>
-              {defect_ratio_percent.toFixed(2)}%
-            </span>
-            <span className="text-xs text-slate-400 dark:text-slate-500">
-              defect area
-            </span>
+          {/* Core Defect Metric & Subtitle */}
+          <div className="flex flex-col">
+            <div className="flex items-baseline gap-1.5">
+              <span className={`text-2xl sm:text-3xl font-black font-mono tracking-tight tabular-nums ${statusConfig.defectColor}`}>
+                {defect_ratio_percent.toFixed(2)}%
+              </span>
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                defect area
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-normal leading-tight mt-0.5">
+              {statusConfig.subtitle}
+            </p>
           </div>
         </div>
 
-        {/* Route Target Pill */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-[#1D222A] text-xs font-medium text-slate-700 dark:text-slate-300">
-          <ArrowBendDownRight size={14} className="text-blue-600 dark:text-sky-400 shrink-0" />
-          <span className="text-slate-400 dark:text-slate-500 font-mono text-[11px]">ROUTE:</span>
-          <span className="font-semibold text-slate-800 dark:text-slate-200">{statusConfig.route}</span>
+        {/* Right: Route Pill Dropdown */}
+        <div className="flex items-center gap-3 px-4 py-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-[#1C2129] shadow-2xs min-w-[210px] justify-between">
+          <div className="flex items-center gap-2.5">
+            <ArrowBendDownRight size={16} weight="bold" className="text-[#2563EB] dark:text-sky-400 shrink-0" />
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] font-bold font-mono tracking-wider text-slate-400 dark:text-slate-500 uppercase">
+                ROUTE
+              </span>
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                {statusConfig.route}
+              </span>
+            </div>
+          </div>
+          <CaretDown size={13} weight="bold" className="text-slate-400 shrink-0 ml-1" />
         </div>
       </div>
 
-      {/* Subtitle / Diagnostic Reason */}
-      <p className="text-xs text-slate-500 dark:text-slate-400 font-normal leading-relaxed -mt-1">
-        {statusConfig.subtitle}
-      </p>
-
-      {/* 2. Sleek Calibrated Tolerance Bar */}
+      {/* 2. Calibrated Tolerance Bar */}
       <div className="pt-1">
-        <div className="relative h-2 w-full rounded-full bg-slate-100 dark:bg-slate-800/80 overflow-hidden">
+        <div className="relative h-2.5 w-full rounded-full bg-[#EEF2F6] dark:bg-slate-800/80 overflow-hidden">
+          {/* Subtle reject background zone indicator on right */}
+          <div
+            style={{ left: `${gradeBPercent}%`, width: `${100 - gradeBPercent}%` }}
+            className="absolute top-0 bottom-0 bg-rose-500/10 dark:bg-rose-500/20"
+          />
+
           {/* Active progress fill */}
           <div
             style={{ width: `${fillPercent}%` }}
-            className={`h-full ${statusConfig.barColor} transition-all duration-300 rounded-full`}
+            className={`h-full bg-gradient-to-r ${statusConfig.barGradient} transition-all duration-300 rounded-full shadow-2xs`}
             title={`Defect Area: ${defect_ratio_percent.toFixed(2)}%`}
           />
         </div>
 
         {/* Threshold Markers & Labels */}
-        <div className="relative mt-1.5 text-[11px] font-mono text-slate-400 dark:text-slate-500 flex justify-between">
+        <div className="relative mt-2 text-[11px] font-mono text-slate-500 dark:text-slate-400 flex items-center justify-between">
           <span>0%</span>
 
           {/* Grade A Tick */}
-          <span
+          <div
             style={{ left: `${gradeAPercent}%` }}
-            className="absolute -translate-x-1/2 flex items-center gap-1"
+            className="absolute -translate-x-1/2 flex items-center gap-1 text-slate-600 dark:text-slate-400"
             title={`Grade A export limit: ≤ ${gradeAThreshold}%`}
           >
-            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-600" />
             <span>A ≤ {gradeAThreshold.toFixed(1)}%</span>
-          </span>
+          </div>
 
           {/* Grade B Tick */}
-          <span
+          <div
             style={{ left: `${gradeBPercent}%` }}
-            className="absolute -translate-x-1/2 flex items-center gap-1"
+            className="absolute -translate-x-1/2 flex items-center gap-1 text-slate-600 dark:text-slate-400"
             title={`Grade B commercial limit: ≤ ${gradeBThreshold}%`}
           >
-            <span className="text-slate-300 dark:text-slate-700">•</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-slate-400 dark:bg-slate-600" />
             <span>B ≤ {gradeBThreshold.toFixed(1)}%</span>
-          </span>
+          </div>
 
-          <span>Reject &gt; {gradeBThreshold.toFixed(1)}%</span>
+          {/* Reject Limit */}
+          <div className="flex items-center gap-1 text-rose-600 dark:text-rose-400 font-medium">
+            <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+            <span>Reject &gt; {gradeBThreshold.toFixed(1)}%</span>
+          </div>
         </div>
       </div>
 
-      {/* 3. Streamlined Defect Flaws List */}
-      <div className="border-t border-slate-100 dark:border-slate-800/80 pt-3">
-        {defects.length > 0 ? (
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-[11px] font-mono font-medium text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">
-              <span className="flex items-center gap-1.5">
-                <Sparkle size={13} className="text-blue-500 dark:text-sky-400" />
-                Detected Surface Flaws ({defects.length})
-              </span>
-              <span>Hover row to highlight on canvas</span>
-            </div>
+      {/* 3. Detected Surface Flaws Section */}
+      <div className="rounded-2xl border border-blue-100/80 dark:border-blue-900/30 bg-[#F0F7FF]/50 dark:bg-[#131E2E]/30 p-3 sm:p-3.5 space-y-2.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-slate-200">
+            <Sparkle size={15} weight="fill" className="text-[#2563EB] dark:text-sky-400" />
+            <span>Detected Surface Flaws ({defects.length})</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500 font-normal">
+            <Info size={14} />
+            <span>Hover row to highlight on canvas</span>
+          </div>
+        </div>
 
+        {defects.length > 0 ? (
+          <div className="space-y-2">
             {defects.map((def) => {
               const isHovered = hoveredDefectId === def.defect_id;
-              const isCritical =
-                def.defect_type.toLowerCase().includes('rot') ||
-                def.defect_type.toLowerCase().includes('decay');
-
-              // Format defect name cleanly (e.g. "cosmetic_defect" -> "Cosmetic Defect")
               const cleanType = def.defect_type
                 .replace(/_/g, ' ')
                 .replace(/\b\w/g, (c) => c.toUpperCase());
@@ -184,69 +232,109 @@ export const InspectionHUD: React.FC<InspectionHUDProps> = ({ result }) => {
                   key={def.defect_id}
                   onMouseEnter={() => setHoveredDefectId(def.defect_id)}
                   onMouseLeave={() => setHoveredDefectId(null)}
-                  className={`flex items-center justify-between px-3 py-2 rounded-xl border text-xs transition-all cursor-pointer ${
+                  className={`flex items-center justify-between px-4 py-2.5 rounded-xl border text-xs transition-all cursor-pointer ${
                     isHovered
-                      ? 'border-blue-300 dark:border-blue-600 bg-blue-50/50 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200 shadow-2xs'
-                      : 'border-slate-100 dark:border-slate-800/80 bg-slate-50/60 dark:bg-[#1A1F26] text-slate-700 dark:text-slate-300 hover:bg-slate-100/60 dark:hover:bg-[#1F252E]'
+                      ? 'border-blue-400 dark:border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 shadow-xs'
+                      : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#16191E] hover:border-slate-300 dark:hover:border-slate-700 shadow-2xs'
                   }`}
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="font-mono font-bold text-xs text-slate-400 dark:text-slate-500">
+                  {/* Defect ID & Name */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="px-2.5 py-0.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#2563EB] dark:text-sky-400 font-bold font-mono text-xs border border-blue-100/60 dark:border-blue-900/40">
                       #{def.defect_id}
                     </span>
-                    <span className="font-semibold truncate">
+                    <span className="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">
                       {cleanType}
                     </span>
-                    {isCritical && (
-                      <span className="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-[10px] font-mono font-bold uppercase tracking-wider">
-                        Critical
-                      </span>
-                    )}
                   </div>
 
-                  <div className="flex items-center gap-3 font-mono text-xs text-slate-500 dark:text-slate-400 shrink-0">
-                    <span className="flex items-center gap-1">
-                      <SlidersHorizontal size={13} className="text-slate-400" />
-                      {(def.confidence * 100).toFixed(0)}%
-                    </span>
-                    <span className="text-slate-300 dark:text-slate-700">•</span>
-                    <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-200">
-                      <CornersOut size={13} className="text-slate-400" />
-                      {def.pixel_area.toLocaleString()} px
-                    </span>
+                  {/* Confidence & Area metrics */}
+                  <div className="flex items-center gap-3 font-mono text-xs text-slate-700 dark:text-slate-200 shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <Crosshair size={14} className="text-slate-400" />
+                      <span className="font-bold">{(def.confidence * 100).toFixed(0)}%</span>
+                    </div>
+
+                    <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
+
+                    <div className="flex items-center gap-1.5">
+                      <BoundingBox size={14} className="text-slate-400" />
+                      <span className="font-bold">{def.pixel_area.toLocaleString()} px</span>
+                    </div>
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className="text-xs text-emerald-600 dark:text-emerald-400 font-mono py-1 flex items-center gap-2">
-            <CheckCircle size={15} weight="bold" />
+          <div className="px-4 py-2.5 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#16191E] text-xs font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+            <Check size={14} weight="bold" />
             <span>Surface clean. No defect polygons identified above tolerance cutoff.</span>
           </div>
         )}
       </div>
 
-      {/* 4. Quiet, Minimal Telemetry Strip */}
-      <div className="border-t border-slate-100 dark:border-slate-800/80 pt-2.5 flex flex-wrap items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500">
-        <div className="flex items-center gap-3">
-          <span>
-            Inference: <strong className="text-slate-700 dark:text-slate-300 font-semibold">{inferenceMs.toFixed(1)} ms</strong>
-          </span>
-          <span>•</span>
-          <span>
-            Total: <strong className="text-slate-700 dark:text-slate-300 font-semibold">{totalMs.toFixed(0)} ms</strong>
-          </span>
-          <span>•</span>
-          <span>
-            Speed: <strong className="text-slate-700 dark:text-slate-300 font-semibold">{fps} FPS</strong>
-          </span>
+      {/* 4. Telemetry Bottom Strip with 5 Individual Pill Chips */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 pt-1">
+        {/* Left: 3 Performance Metric Chips */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Inference Chip */}
+          <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-[#1A1F26] shadow-2xs">
+            <Gauge size={17} className="text-emerald-500 shrink-0" />
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                Inference
+              </span>
+              <span className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                {inferenceMs.toFixed(1)} ms
+              </span>
+            </div>
+          </div>
+
+          {/* Total Chip */}
+          <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-[#1A1F26] shadow-2xs">
+            <Clock size={17} className="text-blue-500 shrink-0" />
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                Total
+              </span>
+              <span className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                {totalMs.toFixed(0)} ms
+              </span>
+            </div>
+          </div>
+
+          {/* Speed Chip */}
+          <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-[#1A1F26] shadow-2xs">
+            <Stack size={17} className="text-indigo-500 shrink-0" />
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500">
+                Speed
+              </span>
+              <span className="text-xs font-bold font-mono text-slate-800 dark:text-slate-200 tabular-nums">
+                {fps} FPS
+              </span>
+            </div>
+          </div>
         </div>
 
+        {/* Right: 2 Runtime Engine Chips */}
         <div className="flex items-center gap-2">
-          <span>ONNX Runtime</span>
-          <span>•</span>
-          <span>CPUExecutionProvider</span>
+          {/* ONNX Runtime Chip */}
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-[#1A1F26] shadow-2xs">
+            <Cpu size={15} className="text-slate-500 dark:text-slate-400 shrink-0" />
+            <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300">
+              ONNX Runtime
+            </span>
+          </div>
+
+          {/* CPU Execution Provider Chip */}
+          <div className="flex items-center gap-2 px-3.5 py-2 rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-[#1A1F26] shadow-2xs">
+            <Circuitry size={15} className="text-slate-500 dark:text-slate-400 shrink-0" />
+            <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300">
+              CPUExecutionProvider
+            </span>
+          </div>
         </div>
       </div>
     </div>

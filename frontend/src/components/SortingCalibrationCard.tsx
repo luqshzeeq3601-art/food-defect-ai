@@ -359,7 +359,7 @@ export const SortingCalibrationCard: React.FC = () => {
                     : 'border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#1A1F26] text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 font-medium'
                 }`}
               >
-                <Gauge size={16} weight="regular" className="text-slate-500 dark:text-slate-400" />
+                <Gauge size={16} weight="bold" className="text-slate-500 dark:text-slate-400" />
                 <span>INT8 (Edge Speed)</span>
               </button>
             </div>

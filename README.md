@@ -327,10 +327,17 @@ cd frontend && npm run lint
 ```
 food-defect-ai/
 ├── README.md                  # This file
-├── AGENTS.md                  # Developer guidelines & coding standards
+├── LICENSE                    # MIT License
 ├── pyproject.toml             # Python packaging, pytest & ruff config
 ├── requirements.txt           # Production dependencies
 ├── .env.example               # Environment variable template
+│
+├── docs/                      # Centralized documentation
+│   ├── assets/                #   Visual assets & Gantt charts
+│   │   └── gantt/             #     Executive summary, WBS, & dependency charts
+│   ├── architecture/          #   System design & component diagrams
+│   ├── specifications/        #   PRD, Data contracts, Security guidelines
+│   └── testing/               #   Verification plans & QA reports
 │
 ├── src/                       # Application source code
 │   ├── api/                   #   FastAPI REST service + schemas
@@ -382,6 +389,28 @@ food-defect-ai/
 | [Data Models & API Contracts](docs/specifications/Data.md) | Schema definitions & data flow |
 | [Security Guidelines](docs/specifications/Security.md) | Industrial security & hardening |
 | [Test Verification Plan](docs/testing/TEST_READY.md) | QA strategy & coverage reports |
+| [Project Roadmap & Gantt](docs/assets/gantt/) | Executive summary, WBS, and dependency schedules |
+
+---
+
+## 📅 Project Roadmap & Schedule
+
+The engineering roadmap and operational milestones are tracked via visual Gantt schedules:
+
+### Executive Summary Roadmap
+High-level lifecycle progression across dataset synthesis, model training, UI engineering, and factory deployment:
+
+![Executive Summary Gantt](docs/assets/gantt/executive-summary-gantt.png)
+
+### Work Breakdown Structure (WBS)
+Complete operational tasks and engineering phase timelines:
+
+![Work Breakdown Structure Gantt](docs/assets/gantt/wbs-gantt.png)
+
+### Component Dependency Timeline
+Critical path dependencies across MLOps pipelines, REST API backend, and frontend workstation:
+
+![Component Dependency Timeline](docs/assets/gantt/component-dependency-timeline.png)
 
 ---
 
@@ -389,7 +418,7 @@ food-defect-ai/
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/onnx-detector`)
-3. Follow [AGENTS.md](AGENTS.md) coding standards (PEP 8, type hints, Google docstrings)
+3. Follow strict coding standards (PEP 8, full type hints, Google docstrings)
 4. Write tests (`pytest -v --tb=short`) — maintain ≥90% coverage on core logic
 5. Lint your code (`ruff check src/ tests/`)
 6. Commit using [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `test:`, `docs:`)

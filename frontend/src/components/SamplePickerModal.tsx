@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, Check } from '@phosphor-icons/react';
+import { X, Check, SquaresFour } from '@phosphor-icons/react';
 import { PRESET_SAMPLES, type PresetSample } from '../constants/presets';
 import { useInspectionStore } from '../store/useInspectionStore';
 
@@ -35,21 +35,26 @@ export const SamplePickerModal: React.FC<SamplePickerModalProps> = ({
       }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-150"
     >
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl border border-gray-200 dark:border-[#262B33] bg-white dark:bg-[#16191E] shadow-2xl transition-colors">
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-slate-200/80 dark:border-[#262B33] bg-white dark:bg-[#16191E] shadow-2xl transition-colors">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 px-6 py-4">
-          <div>
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white">
-              Calibrated Conveyor Sample Library
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-slate-400">
-              Select a pre-calibrated factory capture to test defect segmentation
-            </p>
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-sky-400 shadow-2xs">
+              <SquaresFour size={20} weight="bold" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight tracking-tight">
+                Calibrated Conveyor Sample Library
+              </h3>
+              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
+                Select a pre-calibrated factory capture to test defect segmentation
+              </p>
+            </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>

@@ -11,8 +11,6 @@ import {
   Image as ImageIcon,
   CaretRight,
   XCircle,
-  X,
-  Check,
   Warning,
   Circle,
 } from '@phosphor-icons/react';
@@ -68,7 +66,7 @@ export const ConveyorIngestionCard: React.FC<ConveyorIngestionCardProps> = ({
       {/* Top Header */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-[#2563EB] text-white shadow-xs shadow-blue-500/20">
+          <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-sky-400 shadow-2xs">
             <Camera size={22} weight="fill" />
           </div>
           <div>
@@ -412,15 +410,15 @@ export const ConveyorIngestionCard: React.FC<ConveyorIngestionCardProps> = ({
                   }`}
                 >
                   {isReject && (
-                    <X size={10} weight="bold" className="text-rose-600 dark:text-rose-400" />
+                    <XCircle size={11} weight="fill" className="text-rose-600 dark:text-rose-400 shrink-0" />
                   )}
                   {isGradeA && (
-                    <Check size={10} weight="bold" className="text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle size={11} weight="fill" className="text-emerald-600 dark:text-emerald-400 shrink-0" />
                   )}
                   {isGradeB && (
-                    <Warning size={10} weight="fill" className="text-amber-600 dark:text-amber-400" />
+                    <Warning size={11} weight="fill" className="text-amber-600 dark:text-amber-400 shrink-0" />
                   )}
-                  {isNoObject && <Circle size={8} weight="fill" className="text-slate-500" />}
+                  {isNoObject && <Circle size={9} weight="fill" className="text-slate-400 shrink-0" />}
                   <span className="truncate">
                     {sample.badgeText ||
                       (isReject

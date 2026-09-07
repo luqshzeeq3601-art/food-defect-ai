@@ -72,3 +72,14 @@ Create a high-performance, modern web application for the Food Defect AI Automat
 
 ## Open Questions
 - None. Backend contracts and test samples are fully available.
+
+---
+
+## Project Timeline & Gantt Visuals
+
+| Document View | Chart Image Preview |
+|---|---|
+| **Executive Summary Gantt** | `docs/assets/gantt/executive-summary-gantt.png` |
+| **Detailed WBS Gantt** | `docs/assets/gantt/wbs-gantt.png` |
+| **Component Dependency Timeline** | `docs/assets/gantt/component-dependency-timeline.png` |
+

@@ -7,6 +7,7 @@ import {
 } from '@phosphor-icons/react';
 import { useInspectionStore } from '../store/useInspectionStore';
 import { normalizeGrade } from '../api/types';
+import { PRESET_SAMPLES } from '../constants/presets';
 
 export const AuditLogCard: React.FC = () => {
   const { history, clearHistory, deleteHistoryItem } = useInspectionStore();
@@ -20,19 +21,34 @@ export const AuditLogCard: React.FC = () => {
       'Precision',
       'Grade',
       'Defect %',
+      'Route',
       'Latency (ms)',
       'Diagnostic',
     ];
 
-    const rows = history.map((h) => [
-      h.timestamp,
-      `"${h.sampleName.replace(/"/g, '""')}"`,
-      h.precision.toUpperCase(),
-      h.grade,
-      h.defectRatio.toFixed(2),
-      h.latencyMs.toFixed(1),
-      `"${(h.rejectReason || 'PASS').replace(/"/g, '""')}"`,
-    ]);
+    const rows = history.map((h) => {
+      const norm = normalizeGrade(h.grade);
+      const routeStr =
+        h.route ||
+        (norm === 'GRADE_A'
+          ? 'Chute #1'
+          : norm === 'GRADE_B'
+          ? 'Sort #2'
+          : norm === 'REJECT'
+          ? 'Reject #3'
+          : 'Standby');
+
+      return [
+        h.timestamp,
+        `"${h.sampleName.replace(/"/g, '""')}"`,
+        h.precision.toUpperCase(),
+        h.grade,
+        h.defectRatio.toFixed(2),
+        `"${routeStr}"`,
+        h.latencyMs.toFixed(1),
+        `"${(h.rejectReason || 'PASS').replace(/"/g, '""')}"`,
+      ];
+    });
 
     const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -50,45 +66,67 @@ export const AuditLogCard: React.FC = () => {
   const gradeBCount = history.filter((h) => normalizeGrade(h.grade) === 'GRADE_B').length;
   const rejectCount = history.filter((h) => normalizeGrade(h.grade) === 'REJECT').length;
 
+  // Helper to find image thumbnail for historical row
+  const getThumbnailSrc = (sampleName: string, explicitUrl?: string) => {
+    if (explicitUrl) return explicitUrl;
+    const preset = PRESET_SAMPLES.find((p) => p.name === sampleName);
+    if (preset) return preset.path;
+
+    const lower = sampleName.toLowerCase();
+    if (lower.includes('orange')) return '/samples/real_orange.jpg';
+    if (lower.includes('banana')) return '/samples/real_banana.jpg';
+    if (lower.includes('bruise') || lower.includes('grade b')) return '/samples/real_orange.jpg';
+    if (lower.includes('rot') || lower.includes('decay')) return '/samples/defective_apple_rot.jpg';
+    if (lower.includes('apple')) return '/samples/sample_fruit_grade_a.jpg';
+    return '/samples/sample_fruit_grade_b.jpg';
+  };
+
   return (
     <div
       id="audit-log-card"
-      className="rounded-2xl border border-slate-200/80 dark:border-[#262B33] bg-white dark:bg-[#16191E] p-4 shadow-sm space-y-3 transition-colors"
+      className="rounded-3xl border border-slate-200/80 dark:border-[#262B33] bg-white dark:bg-[#16191E] p-5 sm:p-6 shadow-sm space-y-5 transition-colors"
     >
-      {/* Header with Title + Filter Counts + CSV / Clear actions */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-sky-400">
-            <FileText size={16} weight="bold" />
+      {/* Header: Title + Filter Counts + CSV / Clear actions */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* Left: Icon Squircle + Title & Subtitle + Status Badges */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-sky-400 shadow-2xs">
+            <FileText size={22} weight="bold" />
           </div>
-          <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight shrink-0">
-            Audit Log
-          </h2>
 
-          {total > 0 && (
-            <div className="flex items-center gap-1.5 text-[11px] font-mono">
-              <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-medium">
-                {total} runs
-              </span>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">
-                {gradeACount} A
-              </span>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold border border-amber-500/20">
-                {gradeBCount} B
-              </span>
-              <span className="hidden sm:inline-block px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 font-bold border border-rose-500/20">
-                {rejectCount} Reject
-              </span>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight tracking-tight">
+                Audit Log
+              </h2>
+              <div className="flex items-center gap-1.5 text-xs font-mono">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-sky-400 font-bold border border-blue-100/60 dark:border-blue-900/30">
+                  {total} runs
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-100 dark:border-emerald-900/30">
+                  {gradeACount} A
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-bold border border-amber-100 dark:border-amber-900/30">
+                  {gradeBCount} B
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-bold border border-rose-100 dark:border-rose-900/30">
+                  {rejectCount} Reject
+                </span>
+              </div>
             </div>
-          )}
+            <p className="text-xs text-slate-400 dark:text-slate-500 font-medium mt-0.5">
+              Traceable Session History & Conveyor Records
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        {/* Right: Actions */}
+        <div className="flex items-center gap-2">
           {total > 0 && (
             <button
               type="button"
               onClick={clearHistory}
-              className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer"
+              className="h-9 w-9 flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl border border-slate-200/80 dark:border-slate-800 transition-colors cursor-pointer"
               title="Clear all records"
             >
               <Trash size={15} />
@@ -99,10 +137,10 @@ export const AuditLogCard: React.FC = () => {
             type="button"
             onClick={handleExportCSV}
             disabled={total === 0}
-            className="flex items-center gap-1.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white px-3 py-1.5 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-2xs"
+            className="flex items-center gap-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white px-4 py-2 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-xs"
           >
-            <DownloadSimple size={14} weight="bold" />
-            <span>CSV</span>
+            <DownloadSimple size={15} weight="bold" />
+            <span>Download CSV</span>
           </button>
         </div>
       </div>
@@ -110,75 +148,113 @@ export const AuditLogCard: React.FC = () => {
       {/* Modern Data Table */}
       <div className="overflow-x-auto rounded-xl border border-slate-200/80 dark:border-slate-800/80">
         <table className="w-full text-left text-xs font-sans">
-          <thead className="bg-slate-50 dark:bg-[#1A1F26] border-b border-slate-200/80 dark:border-slate-800/80 text-[11px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          <thead className="bg-slate-50/70 dark:bg-[#1A1F26] border-b border-slate-200/80 dark:border-slate-800/80 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500">
             <tr>
-              <th className="px-3.5 py-2.5 font-medium">Time</th>
-              <th className="px-3.5 py-2.5 font-medium">Sample</th>
-              <th className="px-3.5 py-2.5 font-medium">Grade</th>
-              <th className="px-3.5 py-2.5 font-medium text-right">Defect</th>
-              <th className="px-3.5 py-2.5 font-medium">Route</th>
-              <th className="px-2 py-2.5 font-medium text-center w-8">
-                <span className="sr-only">Actions</span>
-              </th>
+              <th className="px-4 py-3 font-semibold">TIME</th>
+              <th className="px-4 py-3 font-semibold">SAMPLE</th>
+              <th className="px-4 py-3 font-semibold">GRADE</th>
+              <th className="px-4 py-3 font-semibold">DEFECT</th>
+              <th className="px-4 py-3 font-semibold">ROUTE</th>
+              <th className="px-3 py-3 font-semibold text-center w-10">ACTIONS</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 bg-white dark:bg-[#16191E]">
             {total > 0 ? (
-              history.slice(0, 10).map((h) => {
+              history.map((h) => {
                 const norm = normalizeGrade(h.grade);
 
-                let gradePill = 'bg-slate-500/10 text-slate-500 border-slate-500/20';
-                let gradeText = 'STANDBY';
-                let routeName = 'Standby';
+                let gradeBadge = (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold font-mono text-xs border border-slate-200 dark:border-slate-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                    Standby
+                  </span>
+                );
+                let defaultRoute = 'Standby';
 
                 if (norm === 'GRADE_A') {
-                  gradePill = 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25';
-                  gradeText = 'Grade A';
-                  routeName = 'Packer #1';
+                  gradeBadge = (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#F0FDF4] dark:bg-emerald-950/40 text-[#15803D] dark:text-emerald-400 font-bold font-mono text-xs border border-[#DCFCE7] dark:border-emerald-800/40">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#10B981]" />
+                      Grade A
+                    </span>
+                  );
+                  defaultRoute = 'Sort #1';
                 } else if (norm === 'GRADE_B') {
-                  gradePill = 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/25';
-                  gradeText = 'Grade B';
-                  routeName = 'Sort #2';
+                  gradeBadge = (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FFFBEB] dark:bg-amber-950/40 text-[#D97706] dark:text-amber-400 font-bold font-mono text-xs border border-[#FEF3C7] dark:border-amber-800/40">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#F59E0B]" />
+                      Grade B
+                    </span>
+                  );
+                  defaultRoute = 'Sort #2';
                 } else if (norm === 'REJECT') {
-                  gradePill = 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/25';
-                  gradeText = 'Reject';
-                  routeName = 'Reject #3';
+                  gradeBadge = (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FFF1F2] dark:bg-rose-950/40 text-[#E11D48] dark:text-rose-400 font-bold font-mono text-xs border border-[#FFE4E6] dark:border-rose-800/40">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#F43F5E]" />
+                      Reject
+                    </span>
+                  );
+                  defaultRoute = 'Reject #3';
                 }
+
+                const thumbSrc = getThumbnailSrc(h.sampleName, h.thumbnailUrl);
 
                 return (
                   <tr
                     key={h.id}
-                    className="hover:bg-slate-50/80 dark:hover:bg-[#1A1F26] transition-colors group"
+                    className="hover:bg-slate-50/70 dark:hover:bg-[#1A1F26] transition-colors group"
                     title={h.rejectReason || 'Passed quality parameters'}
                   >
-                    <td className="px-3.5 py-2.5 font-mono text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                    {/* Time */}
+                    <td className="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
                       {h.timestamp}
                     </td>
-                    <td className="px-3.5 py-2.5 font-medium text-slate-800 dark:text-slate-200 truncate max-w-[180px]">
-                      {h.sampleName}
+
+                    {/* Sample: Thumbnail Image + Label */}
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <img
+                          src={thumbSrc}
+                          alt={h.sampleName}
+                          className="h-9 w-9 rounded-lg object-cover bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shrink-0 shadow-2xs"
+                          onError={(e) => {
+                            // Fallback if image fails
+                            (e.currentTarget as HTMLImageElement).src = '/samples/sample_fruit_grade_b.jpg';
+                          }}
+                        />
+                        <span className="font-semibold text-xs text-slate-800 dark:text-slate-200 truncate max-w-[260px]">
+                          {h.sampleName}
+                        </span>
+                      </div>
                     </td>
-                    <td className="px-3.5 py-2.5">
-                      <span className={`inline-block px-2 py-0.5 rounded-md border text-[11px] font-bold font-mono ${gradePill}`}>
-                        {gradeText}
-                      </span>
+
+                    {/* Grade */}
+                    <td className="px-4 py-3">
+                      {gradeBadge}
                     </td>
-                    <td className="px-3.5 py-2.5 text-right font-mono font-bold text-slate-800 dark:text-slate-200 tabular-nums">
+
+                    {/* Defect % */}
+                    <td className="px-4 py-3 font-mono font-bold text-xs text-slate-800 dark:text-slate-200 tabular-nums">
                       {h.defectRatio.toFixed(1)}%
                     </td>
-                    <td className="px-3.5 py-2.5 text-slate-600 dark:text-slate-400">
-                      <span className="flex items-center gap-1 text-[11px] font-mono">
-                        <ArrowBendDownRight size={12} className="text-slate-400" />
-                        {routeName}
+
+                    {/* Route */}
+                    <td className="px-4 py-3 text-slate-600 dark:text-slate-400">
+                      <span className="flex items-center gap-1.5 text-xs font-mono">
+                        <ArrowBendDownRight size={13} className="text-slate-400 shrink-0" />
+                        {h.route || defaultRoute}
                       </span>
                     </td>
-                    <td className="px-2 py-2.5 text-center">
+
+                    {/* Actions */}
+                    <td className="px-3 py-3 text-center">
                       <button
                         type="button"
                         onClick={() => deleteHistoryItem(h.id)}
-                        className="p-1 text-slate-300 dark:text-slate-600 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded transition-colors cursor-pointer opacity-80 group-hover:opacity-100"
+                        className="p-1.5 text-slate-300 dark:text-slate-600 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors cursor-pointer opacity-70 group-hover:opacity-100"
                         title="Delete this record"
                       >
-                        <Trash size={13} />
+                        <Trash size={14} />
                       </button>
                     </td>
                   </tr>
@@ -186,7 +262,7 @@ export const AuditLogCard: React.FC = () => {
               })
             ) : (
               <tr>
-                <td colSpan={6} className="px-3.5 py-8 text-center text-xs font-mono text-slate-400 dark:text-slate-500">
+                <td colSpan={6} className="px-4 py-8 text-center text-xs font-mono text-slate-400 dark:text-slate-500">
                   No inspection logs recorded yet. Ingest a conveyor frame to begin.
                 </td>
               </tr>
@@ -197,3 +273,4 @@ export const AuditLogCard: React.FC = () => {
     </div>
   );
 };
+

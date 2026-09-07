@@ -12,6 +12,7 @@ import { HelpModal } from './components/HelpModal';
 import { useInspectionStore } from './store/useInspectionStore';
 import { useInspectMutation } from './api/hooks';
 import type { PresetSample } from './constants/presets';
+import { normalizeGrade } from './api/types';
 import { WarningCircle } from '@phosphor-icons/react';
 
 const queryClient = new QueryClient({
@@ -59,10 +60,18 @@ const MainStation: React.FC = () => {
               now.getUTCMinutes()
             ).padStart(2, '0')}:${String(now.getUTCSeconds()).padStart(2, '0')}`;
 
+            const normGrade = normalizeGrade(data.grade);
+            let routeStr = 'Export Line #1';
+            if (normGrade === 'GRADE_B') routeStr = 'Sort #2';
+            else if (normGrade === 'REJECT') routeStr = 'Reject #3';
+            else if (normGrade === 'NO_OBJECT') routeStr = 'Standby';
+
             addHistoryItem({
               id: data.inspection_id || String(Date.now()),
               timestamp: timeStr,
               sampleName: name,
+              thumbnailUrl: activeImage || undefined,
+              route: routeStr,
               grade: data.grade,
               defectRatio: data.defect_ratio_percent,
               defectCount: data.defects.length,
@@ -74,7 +83,7 @@ const MainStation: React.FC = () => {
         }
       );
     },
-    [modelPrecision, inspectMutation, setCurrentResult, addHistoryItem]
+    [modelPrecision, inspectMutation, setCurrentResult, addHistoryItem, activeImage]
   );
 
   // Handle selecting a sample from the modal: loads image and inspects immediately
@@ -174,14 +183,12 @@ const MainStation: React.FC = () => {
           {/* Right Column (~70%): Optical Viewport + Audit Log (+ Diagnostic Deck when active) */}
           <div className="lg:col-span-8 space-y-5">
             {/* Top Right: Optical Viewport Card */}
-            <OpticalViewportCard />
+            <OpticalViewportCard onSelectSample={handleSelectSample} />
 
-            {/* Unified Industrial Inspection HUD (when inspection active) */}
-            {currentResult && (
-              <div className="animate-in fade-in duration-200">
-                <InspectionHUD result={currentResult} />
-              </div>
-            )}
+            {/* Unified Industrial Inspection HUD */}
+            <div className="animate-in fade-in duration-200">
+              <InspectionHUD result={currentResult} />
+            </div>
 
             {/* Bottom Right: Session Inspection Audit Log Card */}
             <AuditLogCard />

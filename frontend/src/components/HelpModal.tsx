@@ -35,16 +35,18 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
       }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in duration-150"
     >
-      <div className="relative w-full max-w-xl overflow-hidden rounded-2xl border border-gray-200 dark:border-[#262B33] bg-white dark:bg-[#16191E] shadow-2xl transition-colors">
+      <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-slate-200/80 dark:border-[#262B33] bg-white dark:bg-[#16191E] shadow-2xl transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-800 px-6 py-4">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400">
-              <Question size={20} weight="bold" />
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80 px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-[#2563EB] dark:text-sky-400 shadow-2xs">
+              <Question size={22} weight="bold" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white">Operator Guide & Reference</h3>
-              <p className="text-xs text-gray-500 dark:text-slate-400">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white leading-tight tracking-tight">
+                Operator Guide & Reference
+              </h3>
+              <p className="text-xs text-slate-400 dark:text-slate-500 font-medium">
                 Industrial AOI station operating protocols & keyboard shortcuts
               </p>
             </div>
@@ -52,7 +54,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
           >
             <X size={18} />
           </button>

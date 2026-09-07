@@ -50,8 +50,23 @@ interface InspectionState {
 const DEFAULT_DEMO_HISTORY: InspectionHistoryItem[] = [
   {
     id: 'demo-1',
+    timestamp: '08:45:35',
+    sampleName: 'Surface Bruise / Scab (GRADE B)',
+    thumbnailUrl: '/samples/real_orange.jpg',
+    route: 'Sort #2',
+    grade: 'PASS_GRADE_B',
+    defectRatio: 3.0,
+    defectCount: 1,
+    latencyMs: 50.0,
+    rejectReason: null,
+    precision: 'fp32',
+  },
+  {
+    id: 'demo-2',
     timestamp: '07:59:04',
     sampleName: 'Defective Fruit (Active Rot Test)',
+    thumbnailUrl: '/samples/real_banana.jpg',
+    route: 'Reject #3',
     grade: 'REJECT',
     defectRatio: 15.0,
     defectCount: 2,
@@ -60,14 +75,16 @@ const DEFAULT_DEMO_HISTORY: InspectionHistoryItem[] = [
     precision: 'fp32',
   },
   {
-    id: 'demo-2',
+    id: 'demo-3',
     timestamp: '07:58:46',
     sampleName: 'Market Banana (Tropical)',
+    thumbnailUrl: '/samples/real_banana.jpg',
+    route: 'Reject #3',
     grade: 'REJECT',
-    defectRatio: 13.15,
+    defectRatio: 13.2,
     defectCount: 1,
     latencyMs: 216.7,
-    rejectReason: 'Defect area (13.15%) exceeds threshold (5.0%)',
+    rejectReason: 'Defect area (13.20%) exceeds threshold (8.0%)',
     precision: 'fp32',
   },
 ];
@@ -79,8 +96,8 @@ export const useInspectionStore = create<InspectionState>((set) => ({
 
   modelPrecision: 'fp32',
   confidenceThreshold: 0.35,
-  gradeAThreshold: 1.0,
-  gradeBThreshold: 5.0,
+  gradeAThreshold: 3.0,
+  gradeBThreshold: 8.0,
 
   layers: {
     showFruit: true,

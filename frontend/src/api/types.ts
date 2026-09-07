@@ -93,6 +93,8 @@ export interface InspectionHistoryItem {
   id: string;
   timestamp: string;
   sampleName: string;
+  thumbnailUrl?: string;
+  route?: string;
   grade: InspectionGrade;
   defectRatio: number;
   defectCount: number;
