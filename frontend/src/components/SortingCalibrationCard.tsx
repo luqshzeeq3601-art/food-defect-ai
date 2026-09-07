@@ -30,6 +30,7 @@ interface QualityProfile {
     iconBg: string;
     iconColor: string;
     ringColor: string;
+    pillColor: string;
   };
 }
 
@@ -37,46 +38,49 @@ const QUALITY_PROFILES: QualityProfile[] = [
   {
     id: 'export',
     name: 'Export',
-    sub: 'Zero blemish specs',
+    sub: 'Zero blemish',
     gradeA: 1.0,
     gradeB: 3.5,
-    icon: <Globe size={20} weight="duotone" />,
+    icon: <Globe size={18} weight="duotone" />,
     theme: {
       bg: 'bg-blue-50/50 dark:bg-blue-950/20',
       border: 'border-blue-200/80 dark:border-blue-900/50',
       iconBg: 'bg-blue-100/80 dark:bg-blue-900/60',
       iconColor: 'text-[#2563EB] dark:text-sky-400',
       ringColor: 'ring-[#2563EB]',
+      pillColor: 'text-[#2563EB] dark:text-sky-400',
     },
   },
   {
     id: 'commercial',
-    name: 'Market Standard',
+    name: 'Market Std',
     sub: 'Domestic retail',
     gradeA: 1.5,
     gradeB: 5.0,
-    icon: <Storefront size={20} weight="duotone" />,
+    icon: <Storefront size={18} weight="duotone" />,
     theme: {
       bg: 'bg-amber-50/40 dark:bg-amber-950/20',
       border: 'border-amber-200/70 dark:border-amber-900/40',
       iconBg: 'bg-amber-100/80 dark:bg-amber-900/60',
       iconColor: 'text-amber-600 dark:text-amber-400',
       ringColor: 'ring-amber-500',
+      pillColor: 'text-amber-700 dark:text-amber-400',
     },
   },
   {
     id: 'processing',
     name: 'Juice Yield',
-    sub: 'Processing recovery',
+    sub: 'Recovery sort',
     gradeA: 3.0,
     gradeB: 8.0,
-    icon: <Plant size={20} weight="duotone" />,
+    icon: <Plant size={18} weight="duotone" />,
     theme: {
       bg: 'bg-emerald-50/40 dark:bg-emerald-950/20',
       border: 'border-emerald-200/70 dark:border-emerald-900/40',
       iconBg: 'bg-emerald-100/80 dark:bg-emerald-900/60',
       iconColor: 'text-emerald-600 dark:text-emerald-400',
       ringColor: 'ring-emerald-500',
+      pillColor: 'text-emerald-700 dark:text-emerald-400',
     },
   },
 ];
@@ -198,7 +202,7 @@ export const SortingCalibrationCard: React.FC = () => {
           </div>
         ) : (
           /* 3 Quality Recipe Cards */
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-2.5">
             {QUALITY_PROFILES.map((prof) => {
               const isSelected = activeProfile?.id === prof.id;
               return (
@@ -206,36 +210,36 @@ export const SortingCalibrationCard: React.FC = () => {
                   key={prof.id}
                   type="button"
                   onClick={() => handleApplyProfile(prof)}
-                  className={`group relative flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                  className={`group relative flex flex-col justify-between p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                     prof.theme.bg
                   } ${prof.theme.border} ${
                     isSelected
-                      ? `ring-2 ${prof.theme.ringColor} shadow-sm scale-[1.01]`
-                      : 'hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-xs'
+                      ? `ring-2 ${prof.theme.ringColor} shadow-xs scale-[1.01]`
+                      : 'hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-2xs'
                   }`}
                 >
                   {/* Top Row: Icon + Title Stack */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2.5">
                     <div
-                      className={`h-10 w-10 shrink-0 rounded-xl ${prof.theme.iconBg} ${prof.theme.iconColor} flex items-center justify-center transition-transform group-hover:scale-105`}
+                      className={`h-8 w-8 shrink-0 rounded-xl ${prof.theme.iconBg} ${prof.theme.iconColor} flex items-center justify-center transition-transform group-hover:scale-105 shadow-2xs`}
                     >
                       {prof.icon}
                     </div>
                     <div className="min-w-0">
-                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight truncate">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
                         {prof.name}
                       </h4>
-                      <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium truncate mt-0.5">
+                      <p className="text-[10.5px] text-slate-400 dark:text-slate-500 font-medium leading-tight mt-0.5">
                         {prof.sub}
                       </p>
                     </div>
                   </div>
 
                   {/* Bottom Threshold Container */}
-                  <div className="w-full bg-white dark:bg-[#16191E] rounded-xl px-3 py-1.5 mt-3 flex items-center justify-start gap-1.5 text-xs font-mono font-bold border border-slate-100/90 dark:border-slate-800 shadow-2xs">
-                    <span className="text-[#2563EB] dark:text-sky-400">A ≤{prof.gradeA}%</span>
+                  <div className="w-full bg-white dark:bg-[#16191E] rounded-xl px-2.5 py-1.5 mt-2.5 flex items-center justify-between text-[11px] font-mono font-bold border border-slate-100/90 dark:border-slate-800 shadow-2xs">
+                    <span className={prof.theme.pillColor}>A ≤{prof.gradeA}%</span>
                     <span className="text-slate-300 dark:text-slate-600">•</span>
-                    <span className="text-[#2563EB] dark:text-sky-400">B ≤{prof.gradeB}%</span>
+                    <span className={prof.theme.pillColor}>B ≤{prof.gradeB}%</span>
                   </div>
                 </button>
               );

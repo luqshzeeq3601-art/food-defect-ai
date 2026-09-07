@@ -16,8 +16,7 @@ High-throughput, real-time computer vision platform engineered for **24/7 indust
 
 ---
 
-<!-- Add your screenshots here -->
-<!-- ![Dashboard Preview](docs/assets/dashboard-preview.png) -->
+![Food Defect AI Operator Dashboard](docs/assets/ui/dashboard-telemetry.png)
 
 </div>
 
@@ -76,6 +75,17 @@ Reject Solenoid ◄── PASS / REJECT ◄── Grading Engine (Rule-Based Cla
 
 > **Training:** 30 epochs on YOLOv8s-seg with copy-paste defect augmentation, GPU thermal monitoring, and RTX 3070 thermal sentinel.
 
+### Training Metrics & Confusion Matrix
+
+| Training Metrics Across 30 Epochs | Normalized Confusion Matrix |
+|:---:|:---:|
+| ![Training Metrics](docs/assets/results/training-metrics-curves.png) | ![Confusion Matrix](docs/assets/results/confusion-matrix-normalized.png) |
+
+### Validation Batch Predictions
+Ground truth segmentation masks and bounding box predictions evaluated during validation:
+
+![Validation Batch Predictions](docs/assets/results/val-batch-predictions.jpg)
+
 ---
 
 ## 🎯 Grading Logic
@@ -91,6 +101,13 @@ The grading engine applies deterministic industrial rules in priority order:
 | 5 | Defect ratio ≤ 5.0% | `GRADE B` | ✅ Pass |
 
 > **Zero-Tolerance Policy:** Any detection of `rot` or `critical_defect` triggers immediate rejection regardless of surface area ratio.
+
+### Visual Inspection Output & Grading Decisions
+
+| Grade A: Pristine / Pass | Grade B: Minor Blemish / Pass | Reject: Active Rot / Eject |
+|:---:|:---:|:---:|
+| ![Grade A Proof](docs/assets/ui/inspection-grade-a.png) | ![Grade B Proof](docs/assets/ui/inspection-grade-b.png) | ![Reject Rot Proof](docs/assets/ui/inspection-reject-rot.png) |
+| **PASS (Grade A)**<br>Defect Ratio: `0.0%`<br>Status: Direct to consumer packaging | **PASS (Grade B)**<br>Defect Ratio: `0.42%` (≤ 5%)<br>Status: Secondary processing / juicing | **REJECT (Zero-Tolerance)**<br>Defect: `rot`<br>Status: Immediate pneumatic eject |
 
 ---
 
@@ -333,8 +350,10 @@ food-defect-ai/
 ├── .env.example               # Environment variable template
 │
 ├── docs/                      # Centralized documentation
-│   ├── assets/                #   Visual assets & Gantt charts
-│   │   └── gantt/             #     Executive summary, WBS, & dependency charts
+│   ├── assets/                #   Visual documentation assets
+│   │   ├── gantt/             #     Executive summary, WBS, & dependency charts
+│   │   ├── results/           #     Confusion matrix, training curves, validation preds
+│   │   └── ui/                #     Operator workstation & grading proof screenshots
 │   ├── architecture/          #   System design & component diagrams
 │   ├── specifications/        #   PRD, Data contracts, Security guidelines
 │   └── testing/               #   Verification plans & QA reports

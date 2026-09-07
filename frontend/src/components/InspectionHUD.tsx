@@ -42,7 +42,7 @@ export const InspectionHUD: React.FC<InspectionHUDProps> = ({ result }) => {
       iconBg: 'bg-[#10B981]',
       icon: <Check size={18} weight="bold" className="text-white" />,
       textColor: 'text-[#15803D] dark:text-emerald-400',
-      subTextColor: 'text-[#16A34A]/80 dark:text-emerald-500/80',
+      subTextColor: 'text-[#166534] dark:text-emerald-300 font-bold',
       defectColor: 'text-[#15803D] dark:text-emerald-400',
       barGradient: 'from-emerald-400 to-emerald-500',
       subtitle: `Optimal surface quality (≤ ${gradeAThreshold.toFixed(1)}% export threshold).`,
@@ -55,9 +55,9 @@ export const InspectionHUD: React.FC<InspectionHUDProps> = ({ result }) => {
       iconBg: 'bg-[#F59E0B]',
       icon: <Check size={18} weight="bold" className="text-white" />,
       textColor: 'text-[#D97706] dark:text-amber-400',
-      subTextColor: 'text-[#B45309]/80 dark:text-amber-500/80',
-      defectColor: 'text-[#EA580C] dark:text-orange-400',
-      barGradient: 'from-[#F59E0B] to-[#EA580C]',
+      subTextColor: 'text-[#92400E] dark:text-amber-300 font-bold',
+      defectColor: 'text-[#D97706] dark:text-amber-400',
+      barGradient: 'from-amber-400 to-amber-500',
       subtitle: `Minor cosmetic blemish (≤ ${gradeBThreshold.toFixed(1)}% commercial threshold).`,
       route: 'Chute #2 (Secondary Sort)',
     },
@@ -68,7 +68,7 @@ export const InspectionHUD: React.FC<InspectionHUDProps> = ({ result }) => {
       iconBg: 'bg-[#F43F5E]',
       icon: <X size={18} weight="bold" className="text-white" />,
       textColor: 'text-[#E11D48] dark:text-rose-400',
-      subTextColor: 'text-[#BE123C]/80 dark:text-rose-500/80',
+      subTextColor: 'text-[#9F1239] dark:text-rose-300 font-bold',
       defectColor: 'text-[#E11D48] dark:text-rose-400',
       barGradient: 'from-rose-500 to-rose-600',
       subtitle: reject_reason || `Defect exceeds commercial limit (${defect_ratio_percent.toFixed(1)}% > ${gradeBThreshold.toFixed(1)}%).`,
@@ -249,17 +249,17 @@ export const InspectionHUD: React.FC<InspectionHUDProps> = ({ result }) => {
                   </div>
 
                   {/* Confidence & Area metrics */}
-                  <div className="flex items-center gap-3 font-mono text-xs text-slate-700 dark:text-slate-200 shrink-0">
+                  <div className="flex items-center gap-3 font-mono text-xs text-slate-800 dark:text-slate-200 shrink-0">
                     <div className="flex items-center gap-1.5">
                       <Crosshair size={14} className="text-slate-400" />
-                      <span className="font-bold">{(def.confidence * 100).toFixed(0)}%</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{(def.confidence * 100).toFixed(0)}%</span>
                     </div>
 
                     <div className="h-3.5 w-px bg-slate-200 dark:bg-slate-700" />
 
                     <div className="flex items-center gap-1.5">
                       <BoundingBox size={14} className="text-slate-400" />
-                      <span className="font-bold">{def.pixel_area.toLocaleString()} px</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{def.pixel_area.toLocaleString()} px</span>
                     </div>
                   </div>
                 </div>
