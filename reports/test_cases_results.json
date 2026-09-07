@@ -1,0 +1,70 @@
+[
+  {
+    "testCase": "01_proof_reject_rot",
+    "sample": "Active Rot & Decay (REJECT)",
+    "expectedGrade": "REJECT",
+    "actualGrade": "REJECT",
+    "status": "PASS",
+    "defectRatioPercent": 15,
+    "defectsCount": 1,
+    "timing": {
+      "preprocess_ms": 0.59,
+      "inference_ms": 281.8,
+      "postprocess_ms": 0.78,
+      "grading_ms": 0.01,
+      "total_ms": 283.2
+    },
+    "rejectReason": "Active rot detected (zero-tolerance)"
+  },
+  {
+    "testCase": "02_proof_grade_b_blemish",
+    "sample": "Cosmetic Blemish (GRADE B)",
+    "expectedGrade": "PASS_GRADE_B",
+    "actualGrade": "PASS_GRADE_B",
+    "status": "PASS",
+    "defectRatioPercent": 3,
+    "defectsCount": 1,
+    "timing": {
+      "preprocess_ms": 0.85,
+      "inference_ms": 34.93,
+      "postprocess_ms": 0.67,
+      "grading_ms": 0.02,
+      "total_ms": 36.49
+    },
+    "rejectReason": "Passed quality tolerance"
+  },
+  {
+    "testCase": "03_proof_grade_a_healthy",
+    "sample": "Pristine Produce (GRADE A)",
+    "expectedGrade": "PASS_GRADE_A",
+    "actualGrade": "PASS_GRADE_A",
+    "status": "PASS",
+    "defectRatioPercent": 0,
+    "defectsCount": 0,
+    "timing": {
+      "preprocess_ms": 0.83,
+      "inference_ms": 101.23,
+      "postprocess_ms": 0.67,
+      "grading_ms": 0.01,
+      "total_ms": 102.76
+    },
+    "rejectReason": "Passed quality tolerance"
+  },
+  {
+    "testCase": "04_proof_no_object_empty_conveyor",
+    "sample": "Empty Conveyor Belt (NO OBJECT)",
+    "expectedGrade": "NO_OBJECT",
+    "actualGrade": "NO_OBJECT",
+    "status": "PASS",
+    "defectRatioPercent": 0,
+    "defectsCount": 0,
+    "timing": {
+      "preprocess_ms": 3.69,
+      "inference_ms": 72.05,
+      "postprocess_ms": 1.74,
+      "grading_ms": 0.01,
+      "total_ms": 77.51
+    },
+    "rejectReason": "No valid fruit body detected"
+  }
+]

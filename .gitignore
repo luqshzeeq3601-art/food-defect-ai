@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+venv/
+ENV/
+
+# Distribution / Packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Environments & Secrets
+.env
+.env.*
+!.env.example
+
+# Large ML Weights & Raw Data
+models/weights/*.pt
+models/weights/*.onnx
+models/onnx/*.onnx
+*.onnx
+*.pt
+!models/weights/.gitkeep
+!models/onnx/.gitkeep
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+data/fruit_defects*/
+data/roboflow_kuka/
+
+# Frontend
+frontend/node_modules/
+
+# Graphify & Internal Agent Workspaces
+graphify-out/
+.agents/
+scratch/
+screenshots/
+reports/weights/
+*.pt
+*.onnx
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

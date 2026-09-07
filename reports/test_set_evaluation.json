@@ -1,0 +1,32 @@
+{
+  "total_test_images": 253,
+  "overall_accuracy_pct": 82.21,
+  "avg_latency_ms": 20.51,
+  "false_alarm_rate_pct": 8.33,
+  "confusion_matrix": {
+    "PASS_GRADE_A": {
+      "PASS_GRADE_A": 22,
+      "PASS_GRADE_B": 12,
+      "REJECT": 0,
+      "NO_OBJECT": 0
+    },
+    "PASS_GRADE_B": {
+      "PASS_GRADE_A": 5,
+      "PASS_GRADE_B": 46,
+      "REJECT": 17,
+      "NO_OBJECT": 0
+    },
+    "REJECT": {
+      "PASS_GRADE_A": 0,
+      "PASS_GRADE_B": 9,
+      "REJECT": 118,
+      "NO_OBJECT": 0
+    },
+    "NO_OBJECT": {
+      "PASS_GRADE_A": 0,
+      "PASS_GRADE_B": 1,
+      "REJECT": 1,
+      "NO_OBJECT": 22
+    }
+  }
+}

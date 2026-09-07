@@ -1,0 +1,16 @@
+# Large data directories and datasets
+data/
+reports/
+frontend/node_modules/
+frontend/dist/
+frontend/public/samples/
+.venv/
+.git/
+.agents/
+models/weights/
+models/onnx/
+graphify-out/
+*.jpg
+*.png
+*.jpeg
+*.svg
