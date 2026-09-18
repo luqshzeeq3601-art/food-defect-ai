@@ -4,7 +4,7 @@
 
 ### Industrial Automated Optical Inspection (AOI) System
 
-High-throughput, real-time computer vision platform engineered for **24/7 industrial conveyor** food quality grading and automated defect rejection.
+Portfolio-grade computer vision prototype for industrial-style conveyor inspection and automated defect rejection.
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/downloads/)
 [![ONNX Runtime](https://img.shields.io/badge/runtime-ONNX-005CED.svg?logo=onnx&logoColor=white)](https://onnxruntime.ai/)
@@ -12,6 +12,7 @@ High-throughput, real-time computer vision platform engineered for **24/7 indust
 [![React 19](https://img.shields.io/badge/frontend-React%2019-61DAFB.svg?logo=react&logoColor=black)](https://react.dev/)
 [![Tailwind CSS v4](https://img.shields.io/badge/styles-Tailwind%20v4-38B2AC.svg?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Tests](https://img.shields.io/badge/tests-126%20passed-2ea44f.svg?logo=pytest&logoColor=white)]()
+[![CI](https://github.com/luqshzeeq3601-art/food-defect-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/luqshzeeq3601-art/food-defect-ai/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ---
@@ -31,7 +32,7 @@ High-throughput, real-time computer vision platform engineered for **24/7 indust
 - **Spatial Intersection Filtering** — Suppresses false positives by validating defect-to-fruit body overlap
 - **Industrial React 19 Dashboard** — Live reticle canvas, conveyor telemetry, audit logs, and sorting calibration
 - **Standalone Gradio Terminal** — Lightweight operator UI for single-frame inspection and diagnostics
-- **Docker-Ready Deployment** — Production containerization with `docker compose up`
+- **Docker-Ready Deployment** — Reproducible local full-stack deployment with `docker compose up`
 
 ---
 
@@ -167,7 +168,7 @@ Key variables in `.env`:
 # Server
 ENVIRONMENT=production
 HOST=0.0.0.0
-PORT=8008
+PORT=8000
 
 # Model Paths
 DEFAULT_ONNX_MODEL=models/onnx/best_s.onnx
@@ -230,22 +231,22 @@ docker compose -f deploy/docker-compose.yml down
 ### Health Check
 
 ```bash
-curl http://localhost:8008/api/v1/health
+curl http://localhost:8000/api/v1/health
 ```
 
 ```json
 {
   "status": "healthy",
   "model_loaded": true,
-  "execution_provider": "CUDAExecutionProvider",
-  "version": "1.0.0"
+  "execution_provider": "CPUExecutionProvider",
+  "version": "0.2.0"
 }
 ```
 
 ### Inspect Image
 
 ```bash
-curl -X POST http://localhost:8008/api/v1/inspect \
+curl -X POST http://localhost:8000/api/v1/inspect \
   -F "file=@fruit_sample.jpg" \
   -G -d "precision=fp32" -d "return_overlay=true"
 ```
@@ -455,6 +456,6 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 **Built for industrial-grade food quality assurance**
 
-*Engineered for 24/7 conveyor deployment with deterministic sorting decisions*
+*Designed as a reproducible industrial-style inspection demonstration with deterministic sorting decisions*
 
 </div>
