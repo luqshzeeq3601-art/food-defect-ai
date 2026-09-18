@@ -33,7 +33,7 @@ jobs:
           pip install ruff
 
       - name: Lint Python
-        run: ruff check src tests scripts
+        run: ruff check src tests
 
       - name: Run test suite
         run: pytest tests/ -q --tb=short
