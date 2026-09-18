@@ -27,13 +27,13 @@ from src.core.grader import InspectionGrader
 app = FastAPI(
     title=settings.APP_NAME,
     description="High-Speed Automated Optical Inspection (AOI) Pipeline for Food Defect Sorting",
-    version="0.1.0",
+    version=settings.APP_VERSION,
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=settings.cors_allowed_origins,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -61,7 +61,7 @@ async def health_check() -> HealthResponse:
         status="healthy" if is_loaded else "degraded",
         model_loaded=is_loaded,
         execution_provider="CPUExecutionProvider",
-        version="0.2.0",
+        version=settings.APP_VERSION,
     )
 
 
@@ -89,6 +89,12 @@ async def inspect_food_item(
 
     # Read bytes with file size guard
     image_bytes = await file.read()
+    if not image_bytes:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Image file payload is empty.",
+        )
+
     if len(image_bytes) > settings.MAX_IMAGE_SIZE_BYTES:
         raise HTTPException(
             status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
