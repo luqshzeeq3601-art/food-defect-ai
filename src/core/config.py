@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     APP_NAME: str = "Food Defect AOI System"
+    APP_VERSION: str = "0.2.0"
+    CORS_ALLOWED_ORIGINS: str = "http://localhost:3000,http://localhost:8501"
     ENVIRONMENT: str = "development"
     DEBUG: bool = False
 
@@ -40,6 +42,11 @@ class Settings(BaseSettings):
     IOU_THRESHOLD: float = 0.45
     MIN_DEFECT_AREA_PIXELS: int = 50
     ENABLE_SPATIAL_INTERSECTION_FILTER: bool = True
+
+    @property
+    def cors_allowed_origins(self) -> list[str]:
+        """Return configured browser origins as a normalized list."""
+        return [origin.strip() for origin in self.CORS_ALLOWED_ORIGINS.split(",") if origin.strip()]
 
 
 settings = Settings()
