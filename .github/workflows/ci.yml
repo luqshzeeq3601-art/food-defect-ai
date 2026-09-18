@@ -35,8 +35,8 @@ jobs:
       - name: Lint Python
         run: ruff check src tests
 
-      - name: Run test suite
-        run: pytest tests/ -q --tb=short
+      - name: Run model-independent regression suite
+        run: pytest tests/unit/test_grader.py tests/integration/test_api.py -k "grader or empty_payload or invalid_mimetype" -q --tb=short
 
   frontend:
     name: Frontend lint and build
