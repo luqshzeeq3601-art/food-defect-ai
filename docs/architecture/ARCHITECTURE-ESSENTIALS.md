@@ -26,7 +26,7 @@ This document contains condensed, non-negotiable architectural rules. AI agents 
 
 ## 3. API Contract Invariants
 * **Statelessness:** The inference service (`POST /api/v1/inspect`) must be strictly stateless. No session state or memory leaks across requests.
-* **Response Format:** Must strictly follow the `InspectionResponse` Pydantic schema in [Data.md](file:///c:/Users/ZeeqRyz/Desktop/Food%20Defect%20AI/Data.md).
+* **Response Format:** Must strictly follow the `InspectionResponse` Pydantic schema in [Data.md](../specifications/Data.md).
 * **Execution Time Reporting:** All responses must return `timing_ms` broken down into `preprocess_ms`, `inference_ms`, `postprocess_ms`, and `total_ms`.
 
 ---
