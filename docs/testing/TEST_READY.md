@@ -3,6 +3,10 @@
 ## Overview
 The 4-Tier Automated Optical Inspection (AOI) End-to-End test suite has been implemented in `tests/e2e/` to provide rigorous, requirement-driven opaque-box verification across all industrial grading and inference components.
 
+## CI Scope
+
+GitHub Actions runs Ruff plus the model-independent grader and API validation tests. The complete inference and E2E suite requires the ONNX model artifacts, which are kept out of the public repository and should be supplied in a local or secured CI environment.
+
 ## Test Tier Architecture & Inventory
 
 | Tier | Test Module | Scope & Feature Focus | Minimum Required | Actual Implemented | Status |
