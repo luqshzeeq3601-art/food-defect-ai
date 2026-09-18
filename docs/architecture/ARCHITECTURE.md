@@ -33,7 +33,6 @@ flowchart TD
     subgraph Delivery["6. Presentation & Audit"]
         DECIDE --> RES["JSON Response Payload"]
         DECIDE --> VIS["Segmentation Overlay Renderer"]
-        DECIDE --> LOG["Inspection Audit Log (SQLite / CSV)"]
         VIS --> UI
     end
 ```
@@ -69,8 +68,8 @@ flowchart TD
 * Asynchronous REST API powered by FastAPI.
 * Endpoints:
   * `POST /api/v1/inspect`: Accepts multipart image file, returns JSON inspection report and optional base64 overlay.
-  * `GET /api/v1/health`: Returns model warm-up status, execution provider (CPU/GPU), and runtime memory.
-  * `GET /api/v1/metrics`: Inspection throughput, pass rate %, and latency stats.
+  * `GET /api/v1/health`: Returns model availability and runtime version.
+  * Per-inspection latency is returned in the `timing` response object.
 
 ### 2.5 Operator Dashboard (`src/ui/dashboard.py`)
 * Built with Streamlit for clean factory-floor simulation.

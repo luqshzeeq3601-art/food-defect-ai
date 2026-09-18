@@ -3,6 +3,10 @@
 ## Overview
 The 4-Tier Automated Optical Inspection (AOI) End-to-End test suite has been implemented in `tests/e2e/` to provide rigorous, requirement-driven opaque-box verification across all industrial grading and inference components.
 
+## CI Scope
+
+GitHub Actions runs Ruff plus the model-independent grader and API validation tests. The complete inference and E2E suite requires the ONNX model artifacts, which are kept out of the public repository and should be supplied in a local or secured CI environment.
+
 ## Test Tier Architecture & Inventory
 
 | Tier | Test Module | Scope & Feature Focus | Minimum Required | Actual Implemented | Status |
@@ -46,15 +50,8 @@ pytest tests/e2e/test_tier4_real_world_scenarios.py -v --tb=short
 
 ## Escalations & Quality Observations for Implementing Agents
 1. **Zero-Byte File Upload Defense (`src/api/main.py`)**:
-   - **Observation**: When an empty file (`len(image_bytes) == 0`) is uploaded to `/api/v1/inspect`, `cv2.imdecode(np.frombuffer(image_bytes, np.uint8), cv2.IMREAD_COLOR)` throws an unhandled OpenCV assertion failure `cv2.error: (-215:Assertion failed) !buf.empty()` rather than returning `None`. This bypasses the subsequent `image_bgr is None` check and causes an unhandled HTTP 500 error.
-   - **Recommended Fix**: Add a defensive check immediately after reading bytes in `inspect_food_item`:
-     ```python
-     if len(image_bytes) == 0:
-         raise HTTPException(
-             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-             detail="Image file payload is empty.",
-         )
-     ```
+   - **Fixed**: Empty image payloads now return structured HTTP 422 responses before OpenCV decoding.
+   - **Regression coverage**: `tests/integration/test_api.py::test_inspect_empty_payload` verifies the status code and error detail.
 2. **Model Startup Warmup**:
    - **Observation**: First cold inference on CPU takes ~150 ms before graph optimization and cache warm up. Subsequent warm inferences execute consistently in ~60 ms.
    - **Recommended Enhancement**: Execute a dummy inference on a 640x640 zeros array during application startup (`@app.on_event("startup")` or lifespan context) to ensure sub-100ms first-frame response.

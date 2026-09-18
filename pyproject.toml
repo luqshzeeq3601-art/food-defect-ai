@@ -9,7 +9,7 @@ description = "Industrial Automated Optical Inspection (AOI) Vision Pipeline for
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-    { name = "ViTrox AI Inspection Team" }
+    { name = "Muhammad Luqman Haziq Bin Mohamad Lofi" }
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
