@@ -22,6 +22,14 @@ class TestInspectionAPI(unittest.TestCase):
         self.assertEqual(data["status"], "healthy")
         self.assertTrue(data["model_loaded"])
 
+    def test_inspect_empty_payload(self) -> None:
+        response = self.client.post(
+            "/api/v1/inspect",
+            files={"file": ("empty.jpg", b"", "image/jpeg")},
+        )
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.json()["detail"], "Image file payload is empty.")
+
     def test_inspect_invalid_mimetype(self) -> None:
         response = self.client.post(
             "/api/v1/inspect",
