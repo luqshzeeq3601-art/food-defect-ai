@@ -169,6 +169,7 @@ Key variables in `.env`:
 ENVIRONMENT=production
 HOST=0.0.0.0
 PORT=8000
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:8501
 
 # Model Paths
 DEFAULT_ONNX_MODEL=models/onnx/best_s.onnx
