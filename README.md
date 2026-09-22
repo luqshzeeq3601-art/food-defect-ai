@@ -22,6 +22,15 @@ High-throughput, real-time computer vision platform engineered for **24/7 indust
 
 ---
 
+## 📈 Outcomes
+
+- Quantized a YOLOv8s-seg defect segmentation model to INT8 with ONNX Runtime, cutting inference from about 15 ms to 9 ms with 1% or less mAP drop.
+- Encoded a deterministic grading engine that sorts conveyor fruit into Grade A (1% or less defect area), Grade B (5% or less), or reject across 4 defect classes, ejecting any rot regardless of area.
+- Trained the detector for 30 epochs with copy-paste defect augmentation, reaching 77.8% box precision and 50.7% mAP@50 (47.1% mAP@50-95).
+- Hardened the pipeline with a 126-test, 3-tier pytest suite (unit, integration, end-to-end conveyor scenarios) and packaged the FastAPI and React 19 stack with Docker Compose.
+
+---
+
 ## ⚡ Key Features
 
 - **Real-Time Instance Segmentation** — YOLOv8s-seg with ONNX Runtime for pixel-level defect detection under 20ms
